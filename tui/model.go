@@ -6,8 +6,6 @@ import (
 	"os"
 	"path/filepath"
 
-	// Used by limitString
-	// Potentially used by sub-models or for future timing features
 	"gdd/finder"
 	"gdd/parser"
 	"gdd/runner"
