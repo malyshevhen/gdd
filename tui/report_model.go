@@ -15,22 +15,6 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-// ReportKeyMap defines keybindings for the report view.
-type ReportKeyMap struct {
-	BackToList key.Binding
-	// Viewport keys are handled by the viewport model itself (up, down, pgup, pgdn, etc.)
-}
-
-// DefaultReportKeyMap returns a new ReportKeyMap with default keybindings.
-func DefaultReportKeyMap() ReportKeyMap {
-	return ReportKeyMap{
-		BackToList: key.NewBinding(
-			key.WithKeys("esc", "q", "b"), // Allow Esc, q, or b to go back
-			key.WithHelp("esc/q/b", "back to list"),
-		),
-	}
-}
-
 // ReportModel manages the state of the test report view.
 type ReportModel struct {
 	viewport viewport.Model

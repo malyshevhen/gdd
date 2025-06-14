@@ -3,7 +3,6 @@ package tui
 import "github.com/charmbracelet/lipgloss"
 
 // AppStyles holds various lipgloss styles used throughout the application.
-// These styles are centralized here for consistency and easier modification.
 type AppStyles struct {
 	// General UI elements
 	Base  lipgloss.Style // Base style, can be used for general text
@@ -12,7 +11,7 @@ type AppStyles struct {
 	Title lipgloss.Style // For view titles or major headings
 	Debug lipgloss.Style // For any ad-hoc debug info in UI
 
-	// List View (Test List)
+	// List View
 	ListHeader       lipgloss.Style // Header/title of the list
 	ListItem         lipgloss.Style // Default style for a list item
 	ListSelectedItem lipgloss.Style // Style for a selected list item
@@ -28,7 +27,7 @@ type AppStyles struct {
 	Spinner lipgloss.Style // Style for the spinner itself
 	Loading lipgloss.Style // Style for text accompanying the spinner (e.g., "Loading...")
 
-	// Report View (Test Results)
+	// Report View
 	ReportViewport      lipgloss.Style // Border/container for the results viewport
 	ReportTitle         lipgloss.Style // Title of the report
 	ReportSummaryHeader lipgloss.Style // Header for the summary section (e.g., "## Summary")
@@ -45,15 +44,14 @@ type AppStyles struct {
 	SkipIcon      string
 	UnknownIcon   string
 
-	// Code blocks within report (primarily for Glamour, but can define outer padding/margin)
+	// Code blocks within report
 	ReportCodeBlock lipgloss.Style
 
 	// Footer / Global Status Bar
-	FooterStatus lipgloss.Style // For persistent status messages at the bottom
+	FooterStatus lipgloss.Style
 }
 
 // DefaultStyles initializes and returns an AppStyles struct with sensible default styling.
-// Colors are chosen to be generally clear and TUI-friendly.
 func DefaultStyles() *AppStyles {
 	s := new(AppStyles)
 

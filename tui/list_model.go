@@ -7,33 +7,6 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-// ListKeyMap defines keybindings specifically for the list view actions.
-// These are in addition to the default list navigation and filtering keys.
-type ListKeyMap struct {
-	RunSelectedTest key.Binding
-	RunPackageTests key.Binding
-	RunAllTests     key.Binding
-	// Help            key.Binding // Potentially for a context-sensitive help view
-}
-
-// DefaultListKeyMap returns a new ListKeyMap with default keybindings.
-func DefaultListKeyMap() ListKeyMap {
-	return ListKeyMap{
-		RunSelectedTest: key.NewBinding(
-			key.WithKeys("enter"),
-			key.WithHelp("enter", "run selected"),
-		),
-		RunPackageTests: key.NewBinding(
-			key.WithKeys("p"),
-			key.WithHelp("p", "run package"),
-		),
-		RunAllTests: key.NewBinding(
-			key.WithKeys("a"),
-			key.WithHelp("a", "run all"),
-		),
-	}
-}
-
 // ListModel manages the state of the test list view.
 // It embeds charmbracelet/bubbles/list.Model and adds application-specific logic.
 type ListModel struct {
@@ -88,7 +61,7 @@ func (m ListModel) Init() tea.Cmd {
 // Update handles messages for the ListModel.
 // It processes key presses for list actions and delegates other messages
 // to the embedded list.Model.
-func (m ListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) { // Changed return type
+func (m ListModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 
 	switch msg := msg.(type) {

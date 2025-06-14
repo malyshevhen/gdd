@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -18,7 +19,7 @@ type TestEvent struct {
 	Time    time.Time `json:"Time"`
 	Action  string    `json:"Action"`
 	Package string    `json:"Package"`
-	Test    string    `json:"Test,omitempty"`    // Name of test or benchmark
+	Test    string    `json:"Test,omitempty"`
 	Elapsed float64   `json:"Elapsed,omitempty"` // seconds
 	Output  string    `json:"Output,omitempty"`
 }
@@ -34,22 +35,35 @@ const (
 	StatusUnknown TestStatus = "UNKNOWN" // Default status before a final event
 )
 
+func testStatusFromString(status string) TestStatus {
+	switch strings.ToUpper(status) {
+	case "PASS":
+		return StatusPass
+	case "FAIL":
+		return StatusFail
+	case "SKIP":
+		return StatusSkip
+	default:
+		return StatusUnknown
+	}
+}
+
 // TestResult holds processed information for a single test function.
 type TestResult struct {
 	PackageName string
-	Name        string // Test function name
+	Name        string
 	Status      TestStatus
-	Output      []string      // Log output from the test, including failure messages
-	Duration    time.Duration // Elapsed time for the test
+	Output      []string
+	Duration    time.Duration
 }
 
 // PackageResult holds all test results for a single package.
 type PackageResult struct {
 	PackageName   string
-	Status        TestStatus    // Overall status of the package
-	SummaryOutput []string      // General output from the package not tied to a specific test (e.g., build errors, [no test files])
-	Tests         []*TestResult // Slice of individual test results in this package
-	Duration      time.Duration // Total time for the package (from package-level pass/fail event)
+	Status        TestStatus
+	SummaryOutput []string
+	Tests         []*TestResult
+	Duration      time.Duration
 }
 
 // Parse processes the raw byte output from `go test -json` and returns a slice of PackageResult.
@@ -103,7 +117,7 @@ func Parse(jsonData []byte) ([]*PackageResult, error) {
 				Tests:       []*TestResult{},
 			}
 			packageResults[event.Package] = pkgResult
-			if !containsString(orderedPackageNames, event.Package) {
+			if !slices.Contains(orderedPackageNames, event.Package) {
 				orderedPackageNames = append(orderedPackageNames, event.Package)
 			}
 		}
@@ -155,7 +169,7 @@ func Parse(jsonData []byte) ([]*PackageResult, error) {
 			}
 
 		case "pass", "fail", "skip":
-			status := TestStatus(strings.ToUpper(event.Action))
+			status := testStatusFromString(event.Action)
 			duration := time.Duration(event.Elapsed * float64(time.Second))
 
 			if event.Test != "" { // A test function has finished
@@ -288,14 +302,4 @@ func Parse(jsonData []byte) ([]*PackageResult, error) {
 	}
 
 	return finalResults, nil
-}
-
-// containsString checks if a slice of strings contains a specific string.
-func containsString(slice []string, str string) bool {
-	for _, item := range slice {
-		if item == str {
-			return true
-		}
-	}
-	return false
 }
